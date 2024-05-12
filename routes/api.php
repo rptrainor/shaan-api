@@ -20,7 +20,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'can:access-backend'])->group(function () {
     Route::post('/articles', [ArticleController::class, 'store']);
     Route::put('/articles/{slug}', [ArticleController::class, 'update']);
     Route::delete('/articles/{slug}', [ArticleController::class, 'destroy']);

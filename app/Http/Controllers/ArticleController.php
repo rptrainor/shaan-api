@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;  // Add this line
 
 class ArticleController extends Controller
 {
     public function store(Request $request)
     {
+        if (!Gate::allows('access-backend')) {
+            abort(403);
+        }
+
         $data = $request->validate([
             'slug' => 'required|string|unique:articles',
             'title' => 'required|string',
@@ -47,6 +52,9 @@ class ArticleController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (!Gate::allows('access-backend')) {
+            abort(403);
+        }
         $article = Article::findOrFail($id);
 
         $data = $request->validate([
@@ -70,6 +78,9 @@ class ArticleController extends Controller
 
     public function destroy($id)
     {
+        if (!Gate::allows('access-backend')) {
+            abort(403);
+        }
         $article = Article::findOrFail($id);
 
         $article->delete();
