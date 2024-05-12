@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,16 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
-Route::middleware(['auth', 'can:access-backend'])->group(function () {
-    Route::post('/articles', [ArticleController::class, 'store']);
-    Route::put('/articles/{slug}', [ArticleController::class, 'update']);
-    Route::delete('/articles/{slug}', [ArticleController::class, 'destroy']);
-});
+Route::post('/articles', [ArticleController::class, 'store']);
+Route::put('/articles/{id}', [ArticleController::class, 'update']);
+Route::delete('/articles/{id}', [ArticleController::class, 'destroy']);
 
 Route::get('/articles', [ArticleController::class, 'index']);  // Publicly accessible
-Route::get('/article/{slug}', [ArticleController::class, 'show']);
+Route::get('/articles/{slug}', [ArticleController::class, 'show']);

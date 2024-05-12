@@ -5,17 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;  // Add this line
+// use Illuminate\Support\Facades\Log;
+
 
 class ArticleController extends Controller
 {
     public function store(Request $request)
     {
-        if (!Gate::allows('access-backend')) {
-            abort(403);
+        if ($request->header('Authorization') !== 'Bearer ' . env('API_TOKEN')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $data = $request->validate([
+        $validatedData = $request->validate([
             'slug' => 'required|string|unique:articles',
             'title' => 'required|string',
             'description' => 'nullable|string',
@@ -28,8 +29,8 @@ class ArticleController extends Controller
         ]);
 
         try {
-            $data['published_date'] = Carbon::parse($data['published_date'])->toDateString();
-            $article = Article::create($data);
+            $validatedData['published_date'] = Carbon::parse($validatedData['published_date'])->toDateString();
+            $article = Article::create($validatedData);
             return response()->json(['message' => 'Article added successfully', 'article_id' => $article->id], 201);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to create article', 'details' => $e->getMessage()], 400);
@@ -40,25 +41,24 @@ class ArticleController extends Controller
     {
         $articles = Article::all();
         return response()->json(['articles' => $articles], 200)
-                         ->header('Cache-Control', 'public, max-age=31536000');
+            ->header('Cache-Control', 'public, max-age=31536000');
     }
-    
 
     public function show($slug)
-{
-    $article = Article::where('slug', $slug)->firstOrFail();
-    return response()->json($article);
-}
+    {
+        $article = Article::where('slug', $slug)->firstOrFail();
+        return response()->json($article);
+    }
 
     public function update(Request $request, $id)
     {
-        if (!Gate::allows('access-backend')) {
-            abort(403);
+        if ($request->header('Authorization') !== 'Bearer ' . env('API_TOKEN')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
         $article = Article::findOrFail($id);
 
         $data = $request->validate([
-            'slug' => 'required|string|unique:articles',
+            'slug' => 'required|string|unique:articles,slug,' . $article->id,
             'title' => 'required|string',
             'description' => 'nullable|string',
             'body' => 'required|string',
@@ -71,15 +71,14 @@ class ArticleController extends Controller
 
         $data['published_date'] = Carbon::parse($data['published_date'])->toDateString();
 
-        $article->update($data);
-
+        $article->update($data);        
         return response()->json(['message' => 'Article updated successfully'], 200);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        if (!Gate::allows('access-backend')) {
-            abort(403);
+        if ($request->header('Authorization') !== 'Bearer ' . env('API_TOKEN')) {
+            return response()->json(['message' => 'Unauthorized'], 401);
         }
         $article = Article::findOrFail($id);
 

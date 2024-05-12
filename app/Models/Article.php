@@ -16,18 +16,8 @@ class Article extends Model
      * @var array<int, string>
      */
 
-    protected $fillable = [
-        'id',
-        'slug',
-        'title',
-        'description',
-        'body',
-        'author_full_name',
-        'cover_img_src',
-        'cover_img_alt',
-        'is_active',
-        'published_date'
-    ];
+    protected $fillable = ['slug', 'title', 'description', 'body', 'author_full_name', 'cover_img_src', 'cover_img_alt', 'is_active', 'published_date'];
+
 
     // In your Article model
     protected static function boot()
