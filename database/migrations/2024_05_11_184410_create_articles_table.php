@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('cover_img_src')->nullable();
             $table->string('cover_img_alt')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->date('published_date')->nullable(false);
             $table->index(['title', 'is_active']);
         });
     }
