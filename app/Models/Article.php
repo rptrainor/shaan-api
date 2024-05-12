@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Article extends Model
 {
@@ -16,7 +17,8 @@ class Article extends Model
      */
 
     protected $fillable = [
-        'user_id',
+        'id',
+        'slug',
         'title',
         'description',
         'body',
@@ -26,4 +28,16 @@ class Article extends Model
         'is_active',
         'published_date'
     ];
+
+    // In your Article model
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($article) {
+            if (empty($article->slug)) {
+                $article->slug = Str::slug($article->title);
+            }
+        });
+    }
 }

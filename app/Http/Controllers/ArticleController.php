@@ -11,6 +11,7 @@ class ArticleController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'slug' => 'required|string|unique:articles',
             'title' => 'required|string',
             'description' => 'nullable|string',
             'body' => 'required|string',
@@ -33,15 +34,23 @@ class ArticleController extends Controller
     public function index()
     {
         $articles = Article::all();
-
-        return response()->json(['articles' => $articles], 200);
+        return response()->json(['articles' => $articles], 200)
+                         ->header('Cache-Control', 'public, max-age=31536000');
     }
+    
+
+    public function show($slug)
+{
+    $article = Article::where('slug', $slug)->firstOrFail();
+    return response()->json($article);
+}
 
     public function update(Request $request, $id)
     {
         $article = Article::findOrFail($id);
 
         $data = $request->validate([
+            'slug' => 'required|string|unique:articles',
             'title' => 'required|string',
             'description' => 'nullable|string',
             'body' => 'required|string',
