@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('cover_img_alt')->nullable();
             $table->boolean('is_active')->default(true);
             $table->date('published_date')->nullable(false);
+            $table->string('read_time')->nullable(false);
             $table->index(['slug', 'is_active']);
         });
     }

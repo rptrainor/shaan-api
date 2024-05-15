@@ -26,6 +26,7 @@ class ArticleController extends Controller
             'cover_img_alt' => 'nullable|string',
             'is_active' => 'boolean',
             'published_date' => 'required|date',
+            'read_time' => 'required|string',
         ]);
 
         try {
@@ -67,6 +68,7 @@ class ArticleController extends Controller
             'cover_img_alt' => 'nullable|string',
             'is_active' => 'boolean',
             'published_date' => 'required|date',
+            'read_time' => 'required|string',
         ]);
 
         $data['published_date'] = Carbon::parse($data['published_date'])->toDateString();
