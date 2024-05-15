@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Log;
-
 
 class ArticleController extends Controller
 {
@@ -26,7 +24,7 @@ class ArticleController extends Controller
             'cover_img_alt' => 'nullable|string',
             'is_active' => 'boolean',
             'published_date' => 'required|date',
-            'read_time' => 'required|string',
+            'read_time' => 'required|string', // Ensure read_time is required
         ]);
 
         try {
@@ -68,7 +66,7 @@ class ArticleController extends Controller
             'cover_img_alt' => 'nullable|string',
             'is_active' => 'boolean',
             'published_date' => 'required|date',
-            'read_time' => 'required|string',
+            'read_time' => 'required|string', // Ensure read_time is required
         ]);
 
         $data['published_date'] = Carbon::parse($data['published_date'])->toDateString();

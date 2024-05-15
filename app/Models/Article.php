@@ -10,16 +10,10 @@ class Article extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $fillable = [
+        'slug', 'title', 'description', 'body', 'author_full_name', 'cover_img_src', 'cover_img_alt', 'is_active', 'published_date', 'read_time'
+    ];
 
-    protected $fillable = ['slug', 'title', 'description', 'body', 'author_full_name', 'cover_img_src', 'cover_img_alt', 'is_active', 'published_date', 'read_time'];
-
-
-    // In your Article model
     protected static function boot()
     {
         parent::boot();
