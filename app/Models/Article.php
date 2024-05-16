@@ -11,10 +11,13 @@ class Article extends Model
     use HasFactory;
 
     protected $fillable = [
-        'slug', 'title', 'description', 'body', 'author_full_name', 'cover_img_src', 'cover_img_alt', 'is_active', 'published_date', 'read_time'
+        'slug', 'title', 'description', 'body', 'author_full_name', 'cover_img_src', 'cover_img_alt', 'is_active', 'published_date', 'read_time',
     ];
 
-    protected static function boot()
+    /**
+     * The "boot" method of the model.
+     */
+    protected static function boot(): void
     {
         parent::boot();
 
