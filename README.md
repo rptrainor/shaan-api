@@ -28,8 +28,8 @@ If we wanted to, we could handle all of our server-side logic with Cloudflare Wo
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/laravel-api.git
-    cd laravel-api
+    git clone https://github.com/rptrainor/shaan-api.git
+    cd shaan-api
     ```
 
 2. **Install dependencies:**
@@ -72,7 +72,7 @@ If we wanted to, we could handle all of our server-side logic with Cloudflare Wo
     php artisan serve
     ```
 
-Your Laravel API should now be running at `http://localhost:8000`.
+Your Laravel API should now be running at `http://127.0.0.1:8000`.
 
 ## Endpoints
 
