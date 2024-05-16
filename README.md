@@ -1,66 +1,93 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel API for Blog Web App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This repository is part of a larger project that demonstrates a blog web application using Laravel, Cloudflare Workers, Nuxt, Vue, and TailwindCSS. This specific repository contains the backend API, built with Laravel, which provides data and functionality for the blog.
 
-## About Laravel
+## Role in the Larger Project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The Laravel API handles all the server-side logic, including managing blog articles, authentication, and providing a RESTful API for the frontend applications. It serves as the core backend service that other parts of the project interact with.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Why Build This Part?
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+If we wanted to, we could handle all of our server-side logic with Cloudflare Workers and the D1 SQLite database. I chose to include this Laravel server for three main reasons.
 
-## Learning Laravel
+1. **Unified Architecture**: Having a single web server to handle the backend logic provides a more unified architecture than distributing controllers, models, authentication, and any future logic across various Cloudflare Workers.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+2. **Developer Experience**: Existing libraries and the opinionated design of a Laravel web server contribute positively to the developer experience and speed at which new features can be developed.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+3. **Efficient Usage**: This server will primarily be interacted with by internal users of the blog application. General visitors to the blog will first call the client, which is a Nuxt/Vue web app on Cloudflare Pages. That app gets the most recent list of blog articles from the cache in our Cloudflare Worker. Therefore, for the majority of visitors to the blog web app, we are fully leveraging the Cloudflare Global Distribution network. This web server handles business logic that we can afford to process asynchronously. Thus, we get the best of both worlds: a scalable web server designed for future features and a fast, globally distributed client.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Technologies Used
 
-## Laravel Sponsors
+- Laravel
+- PHP
+- SQLite
+- Carbon (for date handling)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Setup Instructions
 
-### Premium Partners
+1. **Clone the repository:**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    ```bash
+    git clone https://github.com/yourusername/laravel-api.git
+    cd laravel-api
+    ```
+
+2. **Install dependencies:**
+
+    ```bash
+    composer install
+    ```
+
+3. **Copy the example environment file and set up your environment variables:**
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    Update the `.env` file with your database and other configuration details.
+
+4. **Generate an application key:**
+
+    ```bash
+    php artisan key:generate
+    ```
+
+5. **Run the database migrations:**
+
+    ```bash
+    php artisan migrate
+    ```
+
+6. **Seed the database (optional):**
+
+    If you have seed data and want to populate the database with it, run:
+
+    ```bash
+    php artisan db:seed
+    ```
+
+7. **Start the development server:**
+
+    ```bash
+    php artisan serve
+    ```
+
+Your Laravel API should now be running at `http://localhost:8000`.
+
+## Endpoints
+
+- `GET /articles` - Retrieve all articles.
+- `GET /articles/{slug}` - Retrieve a single article by slug.
+- `POST /articles` - Create a new article.
+- `PUT /articles/{id}` - Update an article by ID.
+- `DELETE /articles/{id}` - Delete an article by ID.
+
+Ensure to use an authorization token for protected routes.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you would like to contribute to this project, please fork the repository and use a feature branch. Pull requests are warmly welcome.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the MIT License.
