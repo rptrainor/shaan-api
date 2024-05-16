@@ -5,16 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+    }
+
     public function store(Request $request)
     {
-        if ($request->header('Authorization') !== 'Bearer ' . env('API_TOKEN')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'slug' => 'required|string|unique:articles',
             'title' => 'required|string',
             'description' => 'nullable|string',
@@ -24,10 +26,15 @@ class ArticleController extends Controller
             'cover_img_alt' => 'nullable|string',
             'is_active' => 'boolean',
             'published_date' => 'required|date',
-            'read_time' => 'required|string', // Ensure read_time is required
+            'read_time' => 'required|string',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
         try {
+            $validatedData = $validator->validated();
             $validatedData['published_date'] = Carbon::parse($validatedData['published_date'])->toDateString();
             $article = Article::create($validatedData);
             return response()->json(['message' => 'Article added successfully', 'article_id' => $article->id], 201);
@@ -51,12 +58,9 @@ class ArticleController extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($request->header('Authorization') !== 'Bearer ' . env('API_TOKEN')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
         $article = Article::findOrFail($id);
 
-        $data = $request->validate([
+        $validator = Validator::make($request->all(), [
             'slug' => 'required|string|unique:articles,slug,' . $article->id,
             'title' => 'required|string',
             'description' => 'nullable|string',
@@ -66,24 +70,33 @@ class ArticleController extends Controller
             'cover_img_alt' => 'nullable|string',
             'is_active' => 'boolean',
             'published_date' => 'required|date',
-            'read_time' => 'required|string', // Ensure read_time is required
+            'read_time' => 'required|string',
         ]);
 
-        $data['published_date'] = Carbon::parse($data['published_date'])->toDateString();
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
 
-        $article->update($data);        
-        return response()->json(['message' => 'Article updated successfully'], 200);
+        try {
+            $data = $validator->validated();
+            $data['published_date'] = Carbon::parse($data['published_date'])->toDateString();
+            $article->update($data);
+            return response()->json(['message' => 'Article updated successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update article', 'details' => $e->getMessage()], 400);
+        }
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
-        if ($request->header('Authorization') !== 'Bearer ' . env('API_TOKEN')) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
         $article = Article::findOrFail($id);
 
-        $article->delete();
-
-        return response()->json(['message' => 'Article deleted successfully'], 204);
+        try {
+            $article->delete();
+            return response()->json(['message' => 'Article deleted successfully'], 204);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete article', 'details' => $e->getMessage()], 400);
+        }
     }
 }
+
