@@ -14,16 +14,16 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('slug')->unique()->nullable(false);
-            $table->string('title')->nullable(false);
-            $table->string('description')->nullable();
-            $table->longText('body')->nullable(false);
+            $table->string('slug')->unique();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->longText('body');
             $table->string('author_full_name')->nullable();
             $table->string('cover_img_src')->nullable();
             $table->string('cover_img_alt')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->date('published_date')->nullable(false);
-            $table->string('read_time')->nullable(false);
+            $table->date('published_date');
+            $table->string('read_time');
             $table->index(['slug', 'is_active']);
         });
     }
